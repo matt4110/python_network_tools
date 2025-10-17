@@ -28,7 +28,7 @@ def hexdump(src, length=16, show=True):
 # function to receive data    
 def receive_from(connection):
     buffer = b""
-    connection.settimeout(5)
+    connection.settimeout(15)
     try:
         while True:
             data = connection.recv(4096)
