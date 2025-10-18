@@ -1,3 +1,6 @@
+# This tools needs root/sys admin privileges to run
+# Usage: python3 packet-sniffer.py [your machine's IP Addr]
+
 import socket
 import os
 import sys
