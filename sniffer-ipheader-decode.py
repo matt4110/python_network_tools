@@ -62,6 +62,13 @@ class IP:
             if os.name == 'nt':
                 sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
 
+    if __name__ == '__main__':
+        if len(sys.argv) == 2:
+            host = sys.argv[1]
+        else:
+            host = '127.0.0.1'
+        sniff(host)
+
 
 class ICMP:
     def __init__(self, buff):
@@ -102,7 +109,7 @@ class ICMP:
 
                     # calculate where our ICMP packet starts
                     offset = ip_header.ihl * 4
-                    buf = raw_buffer(offset:offset + 8)
+                    buf = raw_buffer[offset:offset + 8]
                     # create our ICMP structure
                     icmp_header = ICMP(buf)
                     print(f'ICMP - > Type: {icmp_header.type} Code: {icmp_header.code} \n')
@@ -110,9 +117,9 @@ class ICMP:
             if os.name == 'nt':
                 sniffer.iotctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
              
-if __name__ == '__main__':
-            if len(sys.argv) == 2:
-                host = sys.argv[1]
-            else:
-                host = '127.0.0.1'
-            sniff(host)
+    if __name__ == '__main__':
+        if len(sys.argv) == 2:
+            host = sys.argv[1]
+        else:
+            host = '127.0.0.1'
+        sniff(host)
