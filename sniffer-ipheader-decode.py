@@ -62,13 +62,6 @@ class IP:
             if os.name == 'nt':
                 sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
 
-    if __name__ == '__main__':
-        if len(sys.argv) == 2:
-            host = sys.argv[1]
-        else:
-            host = '127.0.0.1'
-        sniff(host)
-
 
 class ICMP:
     def __init__(self, buff):
@@ -101,6 +94,7 @@ class ICMP:
             while True:
                 # read a packet
                 raw_buffer = sniffer.recvfrom(65535)[0]
+                ip_header = IP(raw_buffer[0:20])
                 # if it's ICMP, we want it
                 if ip_header.protocol == "ICMP":
                     print(f'Protocol: {ip_header.protocol} {ip_header.src_address} -> {ip_header.dst_address}')
@@ -115,11 +109,11 @@ class ICMP:
                     print(f'ICMP - > Type: {icmp_header.type} Code: {icmp_header.code} \n')
         except KeyboardInterrupt:
             if os.name == 'nt':
-                sniffer.iotctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
+                sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
              
-    if __name__ == '__main__':
-        if len(sys.argv) == 2:
-            host = sys.argv[1]
-        else:
-            host = '127.0.0.1'
-        sniff(host)
+if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        host = sys.argv[1]
+    else:
+        host = '127.0.0.1'
+    sniff(host)
