@@ -4,12 +4,9 @@ import socket
 import struct
 import sys
 
-# host to listen on
-HOST = sys.argv[1]
-
 class IP:
     def __init__(self, buff=None):
-        header = struct.unpack('<BBHHHBBH4s4s', buff)
+        header = struct.unpack('>BBHHHBBH4s4s', buff)
         self.ver = header[0] >> 4
         self.ihl = header[0] & 0xF
         self.tos = header[1]
@@ -32,10 +29,11 @@ class IP:
             self.protocol = self.protocol_map[self.protocol_num]
         except Exception as e:
             print(f'{e} No protocol for {self.protocol_num}')
+            self.protocol = str(self.protocol_num)
 
 class ICMP:
     def __init__(self, buff):
-        header = struct.unpack('<BBHHH', buff)
+        header = struct.unpack('>BBHHH', buff)
         self.type = header[0]
         self.code = header[1]
         self.sum = header[2]
@@ -80,36 +78,13 @@ def sniff(host):
     except KeyboardInterrupt:
         if os.name == 'nt':
             sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
-             
-def main():
-    # Check OS and set appropriate protocol
-    if os.name == 'nt':
-        socket_protocol = socket.IPPROTO_IP
-    else:
-        socket_protocol = socket.IPPROTO_ICMP
-
-    # Create raw socket and bind to public interace
-    sniffer = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket_protocol)
-    sniffer.bind((HOST, 0))
-
-    # include the IP header in the capture
-    sniffer.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-
-    # if we're on Windows, turn on promiscuous mode
-    if os.name == 'nt':
-        sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
-
-    # read one packet
-    print(sniffer.recvfrom(65565))
-
-    # if we're on Windows, turn off promiscuous mode
-    if os.name == 'nt':
-        sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
-
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         host = sys.argv[1]
     else:
-        host = '127.0.0.1'
+        host = '0.0.0.0'
+
+    print(f"Starting sniffer on {host}...")
+    print("Press Ctrl+C to stop\n")
     sniff(host)
