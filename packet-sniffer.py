@@ -34,7 +34,7 @@ def main():
     while True:
         try:
             packets = sniffer.recvfrom(65565)
-            print(packets[0].decode('latin-1'), packets[1])
+            print(packets[0].decode('ascii', errors='ignore'), packets[1])
         except KeyboardInterrupt:
              # if we're on Windows, turn off promiscuous mode
             if os.name == 'nt':
