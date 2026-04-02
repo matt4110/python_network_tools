@@ -28,12 +28,20 @@ def main():
     if os.name == 'nt':
         sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
 
-    # read one packet
-    print(sniffer.recvfrom(65565))
+    print("Waiting for packets...")
 
-    # if we're on Windows, turn off promiscuous mode
-    if os.name == 'nt':
-        sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
+    # read packets
+    while True:
+        try:
+            packets = sniffer.recvfrom(65565)
+            print(packets.decode())
+        except KeyboardInterrupt:
+             # if we're on Windows, turn off promiscuous mode
+            if os.name == 'nt':
+                sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
+            sys.exit(0)
+        except Exception as ex:
+            print(f"Error: {ex}")
 
 if __name__ == '__main__':
     main()
